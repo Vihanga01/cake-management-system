@@ -29,6 +29,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
 .navbar-profile img {
@@ -41,6 +43,18 @@
 
 .navbar-profile img:hover {
   transform: scale(1.1);
+}
+
+.user-name {
+  color: #333;
+  font-weight: 600;
+  font-size: 1rem;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.navbar-profile:hover .user-name {
+  color: white;
 }
 
 /* Profile Dropdown */
@@ -197,6 +211,10 @@
   .navbar img {
     height: 65px;
   }
+
+  .user-name {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -215,5 +233,9 @@
   .btn {
     font-size: 0.8rem;
     padding: 0.4rem 1rem;
+  }
+
+  .user-name {
+    font-size: 0.8rem;
   }
 }
