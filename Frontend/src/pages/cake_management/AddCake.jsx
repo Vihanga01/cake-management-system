@@ -3,9 +3,11 @@ import "./AddCake.css";
 import { assets } from "../../assets/admin_assets/assets.js";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useStore } from "../../context/StoreContext";
 
 const AddCake = () => {
   const url = "http://localhost:5000/api/cakes";
+  const { token } = useStore();
   const [image, setImage] = useState(false);
   const [data, setData] = useState({
     productName: "",
@@ -76,7 +78,12 @@ const AddCake = () => {
     }
 
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        }
+      });
       if (response.data.success) {
         setData({
           productName: "",
@@ -91,7 +98,13 @@ const AddCake = () => {
       }
     } catch (error) {
       console.error("Error adding cake:", error);
-      toast.error(error.response?.data?.message || "Error adding cake");
+      if (error?.response?.status === 401) {
+        toast.error("Unauthorized. Please log in as admin to add.");
+      } else if (error?.response?.status === 403) {
+        toast.error("Forbidden. Admin role required to add.");
+      } else {
+        toast.error(error.response?.data?.message || "Error adding cake");
+      }
     }
   };
 

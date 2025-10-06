@@ -4,11 +4,13 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/admin_assets/assets";
+import { useStore } from "../../context/StoreContext";
 
 const EditCake = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const url = "http://localhost:5000/api/cakes";
+  const { token } = useStore();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -130,6 +132,7 @@ const EditCake = () => {
       const response = await axios.patch(`${url}/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
       });
 
@@ -141,7 +144,13 @@ const EditCake = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Error updating cake");
+      if (error?.response?.status === 401) {
+        toast.error("Unauthorized. Please log in as admin to update.");
+      } else if (error?.response?.status === 403) {
+        toast.error("Forbidden. Admin role required to update.");
+      } else {
+        toast.error("Error updating cake");
+      }
     } finally {
       setSaving(false);
     }

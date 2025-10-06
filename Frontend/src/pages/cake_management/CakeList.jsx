@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
+import { useStore } from "../../context/StoreContext";
 
 const CakeList = () => {
   const url = "http://localhost:5000/api/cakes";
@@ -19,6 +20,7 @@ const CakeList = () => {
     cakeName: "",
   });
   const navigate = useNavigate();
+  const { token } = useStore();
 
   // Fetch list of cakes
   const fetchList = async () => {
@@ -40,7 +42,9 @@ const CakeList = () => {
 
   const removeCake = async (cakeId) => {
     try {
-      const response = await axios.delete(`${url}/${cakeId}`);
+      const response = await axios.delete(`${url}/${cakeId}` , {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
       if (response.data.success) {
         toast.success("Cake deleted successfully");
         await fetchList();
@@ -50,7 +54,13 @@ const CakeList = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Error deleting cake");
+      if (error?.response?.status === 401) {
+        toast.error("Unauthorized. Please log in as admin to delete.");
+      } else if (error?.response?.status === 403) {
+        toast.error("Forbidden. Admin role required to delete.");
+      } else {
+        toast.error("Error deleting cake");
+      }
     }
   };
 

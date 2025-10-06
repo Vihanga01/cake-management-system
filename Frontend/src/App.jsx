@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Products from "./pages/Products/Products";
+import CakeDetail from "./pages/CakeDetail/CakeDetail";
 import Cart from "./pages/Cart/Cart";
 import Checkout from "./pages/Checkout";
 import ThankYou from "./pages/ThankYou";
@@ -25,6 +26,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home setShowLogin={setShowLogin} />} />
           <Route path="/products" element={<Products setShowLogin={setShowLogin} />} />
+          <Route path="/cake/:id" element={<CakeDetail setShowLogin={setShowLogin} />} />
           <Route path="/cart" element={<Cart setShowLogin={setShowLogin} />} />
           <Route path="/checkout" element={<Checkout setShowLogin={setShowLogin} />} />
           <Route path="/thank-you" element={<ThankYou setShowLogin={setShowLogin} />} />
